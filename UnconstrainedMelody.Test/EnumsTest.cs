@@ -37,6 +37,35 @@ namespace UnconstrainedMelody.Test
         }
 
         [Test]
+        public void GetNamesArray()
+        {
+            Number[] numbers = Enums.GetValuesArray<Number>();
+            Assert.IsTrue(numbers.SequenceEqual(new[] { Number.One, Number.Two, Number.Three }));
+        }
+
+        [Test]
+        public void GetNamesReturnsSingleton()
+        {
+            var names = Enums.GetNames<Number>();
+            var names2 = Enums.GetNames<Number>();
+            Assert.AreSame(names, names2);
+        }
+
+        [Test]
+        public void GetNamesReturnsReadOnlyList()
+        {
+            var names = Enums.GetNames<Number>();
+            Assert.IsTrue(names.IsReadOnly);
+        }
+
+        [Test]
+        public void GetNamesReturnsCorrectValues()
+        {
+            var names = Enums.GetNames<Number>();
+            Assert.IsTrue(names.SequenceEqual(new[] { "One", "Two", "Three" }));
+        }
+
+        [Test]
         public void IsNamedValue()
         {
             Assert.IsTrue(BitFlags.Flag24.IsNamedValue());
@@ -81,6 +110,16 @@ namespace UnconstrainedMelody.Test
         public void ParseName()
         {
             Assert.AreEqual(Number.Two, Enums.ParseName<Number>("Two"));
+            Assert.AreEqual(BitFlags.Flag24, Enums.ParseName<BitFlags>("Flag24"));
+        }
+
+        [Test]
+        public void GetUnderlyingType()
+        {
+            Assert.AreEqual(typeof(byte), Enums.GetUnderlyingType<ByteEnum>());
+            Assert.AreEqual(typeof(int), Enums.GetUnderlyingType<Number>());
+            Assert.AreEqual(typeof(long), Enums.GetUnderlyingType<Int64Enum>());
+            Assert.AreEqual(typeof(ulong), Enums.GetUnderlyingType<UInt64Enum>());
         }
     }
 }
