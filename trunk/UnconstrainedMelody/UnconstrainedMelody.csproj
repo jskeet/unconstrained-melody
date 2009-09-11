@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\Rewritten\UnconstrainedMelody.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -41,10 +42,12 @@
   <ItemGroup>
     <Compile Include="Delegates.cs" />
     <Compile Include="DelegateConstraint.cs" />
+    <Compile Include="EnumInternals.cs" />
     <Compile Include="Flags.cs" />
     <Compile Include="IEnumConstraint.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeArgumentException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

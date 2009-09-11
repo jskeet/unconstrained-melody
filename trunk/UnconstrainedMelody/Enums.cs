@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace UnconstrainedMelody
 {
+    /// <summary>
+    /// Provides a set of static methods for use with enum types. Much of
+    /// what's available here is already in System.Enum, but this class
+    /// provides a strongly typed API.
+    /// </summary>
     public static class Enums
     {
         /// <summary>
-        /// Returns an array of values in the enum, in an identical
-        /// way to Enum.GetValues - but strongly typed.
+        /// Returns an array of values in the enum.
         /// </summary>
         /// <typeparam name="T">Enum type</typeparam>
         /// <returns>An array of values in the enum</returns>
@@ -23,7 +26,27 @@ namespace UnconstrainedMelody
         /// <typeparam name="T">Enum type</typeparam>
         public static IList<T> GetValues<T>() where T : struct, IEnumConstraint
         {
-            return PerTypeFields<T>.Values;
+            return EnumInternals<T>.Values;
+        }
+
+        /// <summary>
+        /// Returns an array of names in the enum.
+        /// </summary>
+        /// <typeparam name="T">Enum type</typeparam>
+        /// <returns>An array of names in the enum</returns>
+        public static string[] GetNamesArray<T>() where T : struct, IEnumConstraint
+        {
+            return Enum.GetNames(typeof(T));
+        }
+
+        /// <summary>
+        /// Returns the names for the given enum as an immutable list.
+        /// </summary>
+        /// <typeparam name="T">Enum type</typeparam>
+        /// <returns>An array of names in the enum</returns>
+        public static IList<string> GetNames<T>() where T : struct, IEnumConstraint
+        {
+            return EnumInternals<T>.Names;
         }
 
         /// <summary>
@@ -34,21 +57,22 @@ namespace UnconstrainedMelody
         /// combination of other values without being a named value
         /// in itself. To test for this possibility, use IsValidCombination.
         /// </remarks>
-        /// <typeparam name="T">Type of enum</typeparam>
-        /// <param name="item">Value to test</param>
+        /// <typeparam name="T">Enum type</typeparam>
+        /// <param name="value">Value to test</param>
         /// <returns>True if this value has a name, False otherwise.</returns>
         public static bool IsNamedValue<T>(this T value) where T : struct, IEnumConstraint
         {
-            // TODO: Speed this up a lot :)
+            // TODO: Speed this up for big enums
             return GetValues<T>().Contains(value);
         }
 
+        /* TODO
         /// <summary>
         /// Returns the description for the given value, 
         /// as specified by DescriptionAttribute, or null
         /// if no description is present.
         /// </summary>
-        /// <typeparam name="T">Type of enum</typeparam>
+        /// <typeparam name="T">Enum type</typeparam>
         /// <param name="item">Value to fetch description for</param>
         /// <returns>The description of the value, or null if no description
         /// has been specified.</returns>
@@ -57,8 +81,19 @@ namespace UnconstrainedMelody
         public static string GetDescription<T>(this T item) where T : struct, IEnumConstraint
         {
             return null;
-        }
+        }*/
 
+        /// <summary>
+        /// Parses the name of an enum value.
+        /// </summary>
+        /// <remarks>
+        /// This method only considers named values: it does not parse comma-separated
+        /// combinations of flags enums.
+        /// </remarks>
+        /// <typeparam name="T">Enum type</typeparam>
+        /// <param name="name">Name to parse</param>
+        /// <returns>The parsed value</returns>
+        /// <exception cref="ArgumentException">The name could not be parsed.</exception>
         public static T ParseName<T>(string name) where T : struct, IEnumConstraint
         {
             T value;
@@ -79,33 +114,31 @@ namespace UnconstrainedMelody
         /// considers named values: it does not parse comma-separated
         /// combinations of flags enums.
         /// </remarks>
-        /// <typeparam name="T">Type of enum</typeparam>
+        /// <typeparam name="T">Enum type</typeparam>
         /// <param name="name">Name to parse</param>
         /// <param name="value">Enum value corresponding to given name</param>
         /// <returns>Whether the parse attempt was successful or not</returns>
         public static bool TryParseName<T>(string name, out T value) where T : struct, IEnumConstraint
         {
-            // TODO: Speed this up
-            foreach (T candidate in GetValues<T>())
+            // TODO: Speed this up for big enums
+            int index = EnumInternals<T>.Names.IndexOf(name);
+            if (index == -1)
             {
-                if (candidate.ToString() == name)
-                {
-                    value = candidate;
-                    return true;
-                }
+                value = default(T);
+                return false;
             }
-            value = default(T);
-            return false;
+            value = EnumInternals<T>.Values[index];
+            return true;
         }
 
-        private static class PerTypeFields<T> where T : struct, IEnumConstraint
+        /// <summary>
+        /// Returns the underlying type for the enum
+        /// </summary>
+        /// <typeparam name="T">Enum type</typeparam>
+        /// <returns>The underlying type (Byte, Int32 etc) for the enum</returns>
+        public static Type GetUnderlyingType<T>() where T : struct, IEnumConstraint
         {
-            static internal readonly IList<T> Values;
-
-            static PerTypeFields()
-            {
-                Values = new ReadOnlyCollection<T>((T[]) Enum.GetValues(typeof(T)));
-            }
+            return EnumInternals<T>.UnderlyingType;
         }
     }
 }
