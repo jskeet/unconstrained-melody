@@ -66,7 +66,6 @@ namespace UnconstrainedMelody
             return GetValues<T>().Contains(value);
         }
 
-        /* TODO
         /// <summary>
         /// Returns the description for the given value, 
         /// as specified by DescriptionAttribute, or null
@@ -75,13 +74,36 @@ namespace UnconstrainedMelody
         /// <typeparam name="T">Enum type</typeparam>
         /// <param name="item">Value to fetch description for</param>
         /// <returns>The description of the value, or null if no description
-        /// has been specified.</returns>
-        /// <exception cref="ArgumentException"><paramref name="item"/>
+        /// has been specified (but the value is a named value).</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="item"/>
         /// is not a named member of the enum</exception>
         public static string GetDescription<T>(this T item) where T : struct, IEnumConstraint
         {
-            return null;
-        }*/
+            string description;
+            if (EnumInternals<T>.ValueToDescriptionMap.TryGetValue(item, out description))
+            {
+                return description;
+            }
+            throw new ArgumentOutOfRangeException("item");
+        }
+
+        /// <summary>
+        /// Attempts to find a value with the given description.
+        /// </summary>
+        /// <remarks>
+        /// More than one value may have the same description. In this unlikely
+        /// situation, the first value with the specified description is returned.
+        /// </remarks>
+        /// <typeparam name="T">Enum type</typeparam>
+        /// <param name="description">Description to find</param>
+        /// <param name="value">Enum value corresponding to given description (on return)</param>
+        /// <returns>True if a value with the given description was found,
+        /// false otherwise.</returns>
+        public static bool TryParseDescription<T>(string description, out T value)
+            where T : struct, IEnumConstraint
+        {
+            return EnumInternals<T>.DescriptionToValueMap.TryGetValue(description, out value);
+        }
 
         /// <summary>
         /// Parses the name of an enum value.
@@ -91,7 +113,6 @@ namespace UnconstrainedMelody
         /// combinations of flags enums.
         /// </remarks>
         /// <typeparam name="T">Enum type</typeparam>
-        /// <param name="name">Name to parse</param>
         /// <returns>The parsed value</returns>
         /// <exception cref="ArgumentException">The name could not be parsed.</exception>
         public static T ParseName<T>(string name) where T : struct, IEnumConstraint
@@ -116,7 +137,7 @@ namespace UnconstrainedMelody
         /// </remarks>
         /// <typeparam name="T">Enum type</typeparam>
         /// <param name="name">Name to parse</param>
-        /// <param name="value">Enum value corresponding to given name</param>
+        /// <param name="value">Enum value corresponding to given name (on return)</param>
         /// <returns>Whether the parse attempt was successful or not</returns>
         public static bool TryParseName<T>(string name, out T value) where T : struct, IEnumConstraint
         {

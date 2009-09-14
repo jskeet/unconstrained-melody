@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using System.ComponentModel;
 
 namespace UnconstrainedMelody
 {
@@ -23,11 +25,24 @@ namespace UnconstrainedMelody
         internal static readonly IList<T> Values;
         internal static readonly IList<string> Names;
         internal static readonly Type UnderlyingType;
+        internal static readonly Dictionary<T, string> ValueToDescriptionMap;
+        internal static readonly Dictionary<string, T> DescriptionToValueMap;
 
         static EnumInternals()
         {
             Values = new ReadOnlyCollection<T>((T[]) Enum.GetValues(typeof(T)));
             Names = new ReadOnlyCollection<string>(Enum.GetNames(typeof(T)));
+            ValueToDescriptionMap = new Dictionary<T, string>();
+            DescriptionToValueMap = new Dictionary<string, T>();
+            foreach (T value in Values)
+            {
+                string description = GetDescription(value);
+                ValueToDescriptionMap[value] = description;
+                if (description != null && !DescriptionToValueMap.ContainsKey(description))
+                {
+                    DescriptionToValueMap[description] = value;
+                }
+            }
             UnderlyingType = Enum.GetUnderlyingType(typeof(T));
             IsFlags = typeof(T).IsDefined(typeof(FlagsAttribute), false);
             // Parameters for various expression trees
@@ -49,6 +64,15 @@ namespace UnconstrainedMelody
             }
             AllBits = Not(default(T));
             UnusedBits = And(AllBits, (Not(UsedBits)));
+        }
+
+        private static string GetDescription(T value)
+        {
+            FieldInfo field = typeof(T).GetField(value.ToString());
+            return field.GetCustomAttributes(typeof(DescriptionAttribute), false)
+                        .Cast<DescriptionAttribute>()
+                        .Select(x => x.Description)
+                        .FirstOrDefault();
         }
     }
 }
