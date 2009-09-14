@@ -121,5 +121,47 @@ namespace UnconstrainedMelody.Test
             Assert.AreEqual(typeof(long), Enums.GetUnderlyingType<Int64Enum>());
             Assert.AreEqual(typeof(ulong), Enums.GetUnderlyingType<UInt64Enum>());
         }
+
+        [Test]
+        public void GetDescriptionWhenValueHasDescription()
+        {
+            Assert.AreEqual("First description", Number.One.GetDescription());
+        }
+
+        [Test]
+        public void GetDescriptionWhenValueHasNoDescription()
+        {
+            Assert.IsNull(Number.Two.GetDescription());
+        }
+
+        [Test]
+        public void GetDescriptionForInvalidValue()
+        {
+            TestHelpers.ExpectException<ArgumentOutOfRangeException>
+                (() => ((Number)4).GetDescription());
+        }
+
+        [Test]
+        public void ParseUniqueDescription()
+        {
+            Number number;
+            Assert.IsTrue(Enums.TryParseDescription<Number>("Third description", out number));
+            Assert.AreEqual(Number.Three, number);
+        }
+
+        [Test]
+        public void ParseDuplicateDescription()
+        {
+            BitFlags result;
+            Assert.IsTrue(Enums.TryParseDescription<BitFlags>("Duplicate description", out result));
+            Assert.AreEqual(BitFlags.Flag2, result);
+        }
+
+        [Test]
+        public void ParseMissingDescription()
+        {
+            Number number;
+            Assert.IsFalse(Enums.TryParseDescription<Number>("Doesn't exist", out number));
+        }
     }
 }
