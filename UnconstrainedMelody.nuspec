@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>UnconstrainedMelody</id>
+    <version>0.1</version>
+    <authors>Jon Skeet</authors>
+    <owners>Jon Skeet</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>http://unconstrained-melody.googlecode.com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      Unconstrained Melody is a library of helpful static
+      methods (extension methods where feasible) for working with
+      delegates and enums in a more strongly typed way than you can
+      normally express in C#. It uses generic type constraints to
+      force generic type parameters to be enum or delegate types,
+      which the CLR supports but which C# itself can't express.
+    </description>
+    <tags>generics delegate enum</tags>
+  </metadata>
+  <files>
+    <file src="Rewritten\UnconstrainedMelody.dll" target="lib" />
+    <file src="Rewritten\UnconstrainedMelody.xml" target="lib" />
+  </files>
+</package>
