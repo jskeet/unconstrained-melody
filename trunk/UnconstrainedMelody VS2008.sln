@@ -1,4 +1,4 @@
- Microsoft Visual Studio Solution File, Format Version 10.00
+Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnconstrainedMelody", "UnconstrainedMelody\UnconstrainedMelody.csproj", "{62DEA85A-255B-4A44-8C4E-CD0C9542F95D}"
 	ProjectSection(ProjectDependencies) = postProject
