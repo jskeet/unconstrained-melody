@@ -32,6 +32,7 @@ namespace ConstraintChanger
         {
             @"Microsoft SDKs\Windows\v6.0A\bin",
             @"Microsoft SDKs\Windows\v7.0A\bin",
+            @"Microsoft SDKs\Windows\v8.0A\bin",
             @"Microsoft SDKs\Windows\v7\bin"
         };
 
@@ -68,20 +69,24 @@ namespace ConstraintChanger
 
         private static string FindIldasm()
         {
-            string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-            foreach (string sdkPath in SdkPaths)
+            string[] programFiles = new[] { Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                                            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) };
+            foreach (string root in programFiles)
             {
-                string directory = Path.Combine(programFiles, sdkPath);
-                if (Directory.Exists(directory))
+                foreach (string sdkPath in SdkPaths)
                 {
-                    string ilasm = Path.Combine(directory, "ildasm.exe");
-                    if (File.Exists(ilasm))
+                    string directory = Path.Combine(root, sdkPath);
+                    if (Directory.Exists(directory))
                     {
-                        return ilasm;
+                        string ildasm = Path.Combine(directory, "ildasm.exe");
+                        if (File.Exists(ildasm))
+                        {
+                            return ildasm;
+                        }
                     }
                 }
             }
-            Console.WriteLine("Unable to find SDK directory containing ilasm.exe. Aborting.");
+            Console.WriteLine("Unable to find SDK directory containing ildasm.exe. Aborting.");
             return null;
         }
 
