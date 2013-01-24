@@ -56,8 +56,8 @@ namespace UnconstrainedMelody.Test
         [Test]
         public void GetNamesArray()
         {
-            Number[] numbers = Enums.GetValuesArray<Number>();
-            Assert.IsTrue(numbers.SequenceEqual(new[] { Number.One, Number.Two, Number.Three }));
+            string[] numbers = Enums.GetNamesArray<Number>();
+            Assert.IsTrue(numbers.SequenceEqual(new[] { "One", "Two", "Three" }));
         }
 
         [Test]
