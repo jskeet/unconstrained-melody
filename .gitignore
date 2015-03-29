@@ -1,0 +1,40 @@
+# Editor backups and temporary files
+*~
+*.bak
+*.swp
+
+# IDE-generated files
+*.suo
+*.user
+*.sln.cache
+
+# IDE add-ins
+*.dotCover
+*.ncrunchproject
+*.ncrunchsolution
+_NCrunch*    # cache directories
+.resharper   # solution
+*.ReSharper  # project
+_ReSharper*  # directories
+StyleCop.Cache
+
+# Auto-created thumbnails
+Thumbs.db
+
+# Release (private) key
+Minibench Release.snk
+
+# Build output directories (anywhere)
+**/bin/
+**/obj/
+**/Rewritten/
+
+# Generated web site
+/www/_site/**
+
+# NuGet packages (but not the configuration)
+/src/packages/**/**
+
+# Roslyn temporary files
+/src/*.sln.ide/**
+

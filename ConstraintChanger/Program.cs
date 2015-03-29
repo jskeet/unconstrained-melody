@@ -31,9 +31,12 @@ namespace ConstraintChanger
         private static readonly string[] SdkPaths = 
         {
             @"Microsoft SDKs\Windows\v6.0A\bin",
+            @"Microsoft SDKs\Windows\v7\bin",
             @"Microsoft SDKs\Windows\v7.0A\bin",
+            @"Microsoft SDKs\Windows\v8.0\bin",
             @"Microsoft SDKs\Windows\v8.0A\bin",
-            @"Microsoft SDKs\Windows\v7\bin"
+            @"Microsoft SDKs\Windows\v8.1\bin",
+            @"Microsoft SDKs\Windows\v8.1A\bin",
         };
 
         static int Main()
@@ -101,6 +104,10 @@ namespace ConstraintChanger
                 WindowStyle = ProcessWindowStyle.Hidden
             });
             process.WaitForExit();
+            if (process.ExitCode != 0)
+            {
+                throw new Exception("ildasm failed");
+            }
             return ilFile;
         }
 
@@ -112,12 +119,14 @@ namespace ConstraintChanger
                 Directory.CreateDirectory(OutputDirectory);
             }
 
+            string resFile = Path.ChangeExtension(ilFile, ".res");
+
             string output = Path.Combine(OutputDirectory, OutputAssembly);
             Console.WriteLine("Recompiling {0} to {1}", ilFile, output);
             Process process = Process.Start(new ProcessStartInfo
             {
                 FileName = ilasmExe,
-                Arguments = "/OUTPUT=" + output + " /DLL " + "\"" + ilFile + "\"",
+                Arguments = "/OUTPUT=" + output + " /DLL " + "\"" + ilFile + "\" /RESOURCE=\"" + resFile + "\"",
                 WindowStyle = ProcessWindowStyle.Hidden
             });
             process.WaitForExit();
@@ -134,7 +143,9 @@ namespace ConstraintChanger
         {
             // Surely this is too simple to actually work...
             return line.Replace("(UnconstrainedMelody.DelegateConstraint)", "([mscorlib]System.Delegate)")
-                       .Replace("([mscorlib]System.ValueType, UnconstrainedMelody.IEnumConstraint)", "([mscorlib]System.Enum)");
+                       .Replace("([mscorlib]System.ValueType, UnconstrainedMelody.IEnumConstraint)", "([mscorlib]System.Enum)")
+                       // Roslyn puts the constrains in the opposite order...
+                       .Replace("(UnconstrainedMelody.IEnumConstraint, [mscorlib]System.ValueType)", "([mscorlib]System.Enum)");
         }
     }
 }
