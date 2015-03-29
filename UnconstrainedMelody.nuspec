@@ -2,11 +2,11 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>UnconstrainedMelody</id>
-    <version>0.2</version>
+    <version>0.2.1</version>
     <authors>Jon Skeet</authors>
     <owners>Jon Skeet</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
-    <projectUrl>http://github.com/skeet/unconstrained-melody</projectUrl>
+    <projectUrl>http://github.com/jskeet/unconstrained-melody</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
       Helpful static methods (or extension methods) for enums and
