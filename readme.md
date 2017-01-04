@@ -8,7 +8,7 @@ http://nuget.org/List/Packages/UnconstrainedMelody
 
 Or if you want the "Constraint Changer" to write your own generic members
 in the same way, build the source code from the project home page:
-http://code.google.com/p/unconstrained-melody/
+https://github.com/jskeet/unconstrained-melody
 
 Email me with any queries, questions, etc. (Or use the issue tracker to report bugs.)
 Jon Skeet, skeet@pobox.com
