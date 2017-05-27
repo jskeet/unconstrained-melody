@@ -198,6 +198,12 @@ namespace UnconstrainedMelody
             return EnumInternals<T>.UnderlyingType;
         }
 
+        /// <summary>
+        /// Returns a IEnumerable collection of type KeyValuePair&lt;string, T&gt; which holds the Description/Name of each value for an enum with it's corresponding value mapped so that Key is the Description/Name and the Value is the underlying value
+        /// </summary>
+        /// <typeparam name="T">Enum type</typeparam>
+        /// <param name="fallbackToName">Boolean saying to fall back to the value name in case there is no description or not (default value: true)</param>
+        /// <returns>A IEnumerable containing a KeyValuePair with the Description/Name and Value</returns>
         public static IEnumerable<KeyValuePair<string, T>> GetDescriptionValueMap<T>(bool fallbackToName = true) where T : struct, IEnumConstraint
         {
             return Enum.GetValues(typeof(T))
