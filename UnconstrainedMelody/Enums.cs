@@ -197,5 +197,18 @@ namespace UnconstrainedMelody
         {
             return EnumInternals<T>.UnderlyingType;
         }
+
+        public static IEnumerable<KeyValuePair<string, T>> GetDescriptionValueMap<T>(bool fallbackToName = true) where T : struct, IEnumConstraint
+        {
+            return Enum.GetValues(typeof(T))
+                .Cast<T>()
+                .Select(value =>
+                {
+                    string description = GetDescription(value);
+                    if (description == null && fallbackToName)
+                        description = value.ToString();
+                    return new KeyValuePair<string, T>(description, value);
+                });
+        }
     }
 }
