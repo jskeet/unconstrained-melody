@@ -1,13 +1,13 @@
 ﻿#region License and Terms
 // Unconstrained Melody
 // Copyright (c) 2009-2011 Jonathan Skeet. All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnconstrainedMelody
 {
@@ -33,8 +34,8 @@ namespace UnconstrainedMelody
         /// <typeparam name="T">Enum type</typeparam>
         /// <returns>An array of values in the enum</returns>
         public static T[] GetValuesArray<T>() where T : struct, IEnumConstraint
-        { 
-            return (T[]) Enum.GetValues(typeof(T)); 
+        {
+            return (T[]) Enum.GetValues(typeof(T));
         }
 
         /// <summary>
@@ -43,7 +44,7 @@ namespace UnconstrainedMelody
         /// <typeparam name="T">Enum type</typeparam>
         public static IList<T> GetValues<T>() where T : struct, IEnumConstraint
         {
-            return EnumInternals<T>.Values;
+            return EnumInternals<T>.NameToValueMap.Values.ToList();
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace UnconstrainedMelody
         /// <returns>An array of names in the enum</returns>
         public static IList<string> GetNames<T>() where T : struct, IEnumConstraint
         {
-            return EnumInternals<T>.Names;
+            return EnumInternals<T>.NameToValueMap.Keys.ToList();
         }
 
         /// <summary>
@@ -79,12 +80,11 @@ namespace UnconstrainedMelody
         /// <returns>True if this value has a name, False otherwise.</returns>
         public static bool IsNamedValue<T>(this T value) where T : struct, IEnumConstraint
         {
-            // TODO: Speed this up for big enums
             return GetValues<T>().Contains(value);
         }
 
         /// <summary>
-        /// Returns the description for the given value, 
+        /// Returns the description for the given value,
         /// as specified by DescriptionAttribute, or null
         /// if no description is present.
         /// </summary>
@@ -101,7 +101,7 @@ namespace UnconstrainedMelody
             {
                 return description;
             }
-            throw new ArgumentOutOfRangeException("item");
+            throw new ArgumentOutOfRangeException(nameof(item));
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace UnconstrainedMelody
             T value;
             if (!TryParseDescription(description, out value))
             {
-                throw new ArgumentException("Unknown description", "description");
+                throw new ArgumentException("Unknown description", nameof(description));
             }
             return value;
         }
@@ -158,7 +158,7 @@ namespace UnconstrainedMelody
             T value;
             if (!TryParseName(name, out value))
             {
-                throw new ArgumentException("Unknown name", "name");
+                throw new ArgumentException("Unknown name", nameof(name));
             }
             return value;
         }
@@ -179,15 +179,13 @@ namespace UnconstrainedMelody
         /// <returns>Whether the parse attempt was successful or not</returns>
         public static bool TryParseName<T>(string name, out T value) where T : struct, IEnumConstraint
         {
-            // TODO: Speed this up for big enums
-            int index = EnumInternals<T>.Names.IndexOf(name);
-            if (index == -1)
+            if (EnumInternals<T>.NameToValueMap.ContainsKey(name))
             {
-                value = default(T);
-                return false;
+                value = EnumInternals<T>.NameToValueMap[name];
+                return true;
             }
-            value = EnumInternals<T>.Values[index];
-            return true;
+            value = default(T);
+            return false;
         }
 
         /// <summary>
