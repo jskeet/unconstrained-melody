@@ -122,6 +122,27 @@ namespace UnconstrainedMelody
             return EnumInternals<T>.DescriptionToValueMap.TryGetValue(description, out value);
         }
 
+
+        /// <summary>
+        /// Parses the description of an enum value.
+        /// </summary>
+        /// <remarks>
+        /// This method only considers named values: it does not parse comma-separated
+        /// combinations of flags enums.
+        /// </remarks>
+        /// <typeparam name="T">Enum type</typeparam>
+        /// <returns>The parsed value</returns>
+        /// <exception cref="ArgumentException">The description could not be parsed.</exception>
+        public static T ParseDescription<T>(string description) where T : struct, IEnumConstraint
+        {
+            T value;
+            if (!TryParseDescription(description, out value))
+            {
+                throw new ArgumentException("Unknown description", "description");
+            }
+            return value;
+        }
+
         /// <summary>
         /// Parses the name of an enum value.
         /// </summary>
